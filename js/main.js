@@ -36,35 +36,44 @@ function fitType() {
 
 /* Rotating bottle: 72 decoded frames, a full background plate and a matching cut-out */
 
-const SPIN_FRAMES = 72;
-const plates = [];
-const cutouts = [];
-const plateCanvases = [...document.querySelectorAll('.js-spin')];
-const cutCanvas = document.querySelector('.js-spin-cut');
+const SPIN_FRAMES = 144;
+const spinFrames = [];
+const spinCanvases = [...document.querySelectorAll('.js-spin')];
 let spinIdle = 0;
 let spinScroll = 0;
-let drawnIndex = -1;
+let spinScrollTarget = 0;
+let drawnPosition = -1;
 
-function loadFrames(folder, store) {
+function loadSpin() {
   for (let i = 0; i < SPIN_FRAMES; i++) {
     const img = new Image();
     img.decoding = 'async';
-    img.src = `assets/seq/${folder}/${String(i).padStart(3, '0')}.webp`;
-    img.decode().then(() => { store[i] = img; }, () => {});
+    img.src = `assets/seq/spin/${String(i).padStart(3, '0')}.webp`;
+    img.decode().then(() => { spinFrames[i] = img; }, () => {});
   }
 }
 
 function sizeCanvas(canvas) {
-  const dpr = Math.min(window.devicePixelRatio, 1.5);
+  const dpr = Math.min(window.devicePixelRatio, 2);
   canvas.width = Math.round(canvas.clientWidth * dpr);
   canvas.height = Math.round(canvas.clientHeight * dpr);
 }
 
-function paint(canvas, frame) {
-  if (!frame || !canvas.width) return;
+// blends two neighbouring frames so the turn stays smooth at any speed
+function paintSpin(canvas, position) {
+  const i = Math.floor(position) % SPIN_FRAMES;
+  const next = spinFrames[(i + 1) % SPIN_FRAMES];
+  const frame = spinFrames[i];
+  if (!frame || !next || !canvas.width) return;
   const ctx = canvas.getContext('2d');
+  const blend = position - Math.floor(position);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.globalAlpha = 1;
   ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
+  ctx.globalAlpha = blend;
+  ctx.drawImage(next, 0, 0, canvas.width, canvas.height);
+  ctx.globalAlpha = 1;
+  canvas.parentElement.classList.add('is-live');
 }
 
 /* The sip: each taste rises over the last one like soda filling a glass */
@@ -81,7 +90,10 @@ const LENGTH = 0.15;
 const GAP = 0.2;
 const levels = new Array(STEPS + 1).fill(-1);
 let progress = 0;
+let progressTarget = 0;
+let sipVisible = true;
 let headerOverride = null;
+let headerInk = '';
 
 const smoothstep = (x) => x * x * (3 - 2 * x);
 const level = (i) => smoothstep(gsap.utils.clamp(0, 1, (progress - START - (i - 1) * GAP) / LENGTH));
@@ -92,26 +104,19 @@ function pour() {
   for (let i = 1; i <= STEPS; i++) {
     const r = level(i);
     if (r > 0.5) active = i;
-    if (r === levels[i]) continue;
+    if (Math.abs(r - levels[i]) < 0.0005) continue;
     levels[i] = r;
     const y = (1 - r) * height;
     layers[i].style.transform = `translate3d(0, ${y}px, 0)`;
     inners[i].style.transform = `translate3d(0, ${-y}px, 0)`;
     waves[i - 1].style.transform = `translate3d(0, ${y - 24}px, 0)`;
-    waves[i - 1].style.visibility = r > 0 && r < 1 ? 'visible' : 'hidden';
+    waves[i - 1].style.visibility = r > 0.001 && r < 0.999 ? 'visible' : 'hidden';
   }
-  header.style.setProperty('--header-ink', headerOverride || layers[active].dataset.ink);
-}
-
-function spin() {
-  const index = Math.floor(spinIdle + spinScroll) % SPIN_FRAMES;
-  if (index === drawnIndex) return;
-  drawnIndex = index;
-  if (levels[1] < 1) {
-    paint(plateCanvases[0], plates[index]);
-    paint(cutCanvas, cutouts[index]);
+  const ink = headerOverride || layers[active].dataset.ink;
+  if (ink !== headerInk) {
+    headerInk = ink;
+    header.style.setProperty('--header-ink', ink);
   }
-  if (levels[STEPS] > 0) paint(plateCanvases[1], plates[index]);
 }
 
 ScrollTrigger.create({
@@ -119,10 +124,16 @@ ScrollTrigger.create({
   start: 'top top',
   end: 'bottom bottom',
   onUpdate: (self) => {
-    progress = self.progress;
-    spinScroll = self.progress * SPIN_FRAMES * 6;
-    pour();
+    progressTarget = self.progress;
+    spinScrollTarget = self.progress * SPIN_FRAMES * 6;
   },
+});
+
+ScrollTrigger.create({
+  trigger: sip,
+  start: 'top bottom',
+  end: 'bottom top',
+  onToggle: (self) => { sipVisible = self.isActive; },
 });
 
 document.querySelectorAll('[data-header]').forEach((section) => {
@@ -137,9 +148,21 @@ document.querySelectorAll('[data-header]').forEach((section) => {
   });
 });
 
+// scroll is eased so wheel steps turn into one continuous movement
 gsap.ticker.add((time, deltaTime) => {
-  if (!reducedMotion) spinIdle = (spinIdle + (deltaTime / 1000) * (SPIN_FRAMES / 5)) % SPIN_FRAMES;
-  spin();
+  if (!sipVisible) return;
+  const dt = deltaTime / 1000;
+  const ease = reducedMotion ? 1 : 1 - Math.exp(-dt * 7);
+  progress += (progressTarget - progress) * ease;
+  spinScroll += (spinScrollTarget - spinScroll) * ease;
+  if (!reducedMotion) spinIdle = (spinIdle + dt * (SPIN_FRAMES / 6)) % SPIN_FRAMES;
+  pour();
+
+  const position = (spinIdle + spinScroll) % SPIN_FRAMES;
+  if (Math.abs(position - drawnPosition) < 0.01) return;
+  drawnPosition = position;
+  if (levels[1] < 1) paintSpin(spinCanvases[0], position);
+  if (levels[STEPS] > 0) paintSpin(spinCanvases[1], position);
 });
 
 /* Crate: missing bottles leave empty slots */
@@ -198,9 +221,9 @@ document.querySelector('.js-add').addEventListener('click', () => {
 
 function resize() {
   fitType();
-  [...plateCanvases, cutCanvas].forEach(sizeCanvas);
+  spinCanvases.forEach(sizeCanvas);
   levels.fill(-1);
-  drawnIndex = -1;
+  drawnPosition = -1;
   pour();
 }
 
@@ -211,8 +234,7 @@ const fontsReady = Promise.race([
 
 choose(selected);
 resize();
-loadFrames('spin-bg', plates);
-loadFrames('spin', cutouts);
+loadSpin();
 window.addEventListener('resize', resize);
 fontsReady.then(() => {
   resize();

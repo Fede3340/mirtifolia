@@ -12,7 +12,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anybody:wdth,wght@50..150,100..900&family=Schibsted+Grotesk:wght@400..700&display=swap">
   <link rel="stylesheet" href="css/style.css">
-  <link rel="preload" as="image" href="assets/img/spin-base.webp">
+  <link rel="preload" as="image" href="assets/img/spin-plate.webp">
 </head>
 <body>
   <header class="header">
@@ -30,12 +30,12 @@
         <div class="layer layer--first" style="--bg: var(--orange)" data-ink="#2a0e07">
           <div class="layer__inner">
             <div class="spin spin--center">
-              <img decoding="async" class="spin__poster" src="assets/img/spin-base.webp" width="1248" height="1664" alt="La bottiglia di Mirtifolia da 27 cl al sole, su fondo arancione.">
-              <canvas class="spin__frame js-spin" aria-hidden="true"></canvas>
+              <img decoding="async" class="spin__poster" src="assets/img/spin-plate.webp" width="936" height="1248" alt="La bottiglia di Mirtifolia da 27 cl al sole, su fondo arancione.">
             </div>
             <h1 class="wordmark display js-wordmark"><span>Mirti</span><span>folia</span></h1>
             <div class="spin spin--center spin--front" aria-hidden="true">
-              <canvas class="spin__cut js-spin-cut"></canvas>
+              <img decoding="async" class="spin__cut spin__first" src="assets/seq/spin/000.webp" alt="">
+              <canvas class="spin__cut js-spin"></canvas>
             </div>
             <p class="layer__motto">Dolce per un attimo, poi amaro per un bel pezzo.</p>
             <p class="layer__hint">Scorri</p>
@@ -68,8 +68,9 @@
         <div class="layer" style="--bg: var(--orange)" data-ink="#2a0e07">
           <div class="layer__inner">
             <div class="spin spin--right">
-              <img decoding="async" class="spin__poster" src="assets/img/spin-base.webp" width="1248" height="1664" alt="">
-              <canvas class="spin__frame js-spin" aria-hidden="true"></canvas>
+              <img decoding="async" class="spin__poster" src="assets/img/spin-plate.webp" width="936" height="1248" alt="">
+              <img decoding="async" class="spin__cut spin__first" src="assets/seq/spin/000.webp" alt="" aria-hidden="true">
+              <canvas class="spin__cut js-spin" aria-hidden="true"></canvas>
             </div>
             <div class="layer__words"><span class="layer__time">4,0 s</span><h2 class="layer__state display js-state">Un altro.</h2></div>
             <p class="layer__text"><a class="layer__link" href="#cassa">Prendi una cassa</a></p>
