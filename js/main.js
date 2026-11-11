@@ -44,13 +44,22 @@ let spinScroll = 0;
 let spinScrollTarget = 0;
 let drawnPosition = -1;
 
+// coarse frames first, so the bottle turns as soon as a few are in
+function loadOrder(count) {
+  const order = [];
+  for (const step of [16, 8, 4, 2, 1]) {
+    for (let i = 0; i < count; i += step) if (!order.includes(i)) order.push(i);
+  }
+  return order;
+}
+
 function loadSpin() {
-  for (let i = 0; i < SPIN_FRAMES; i++) {
+  loadOrder(SPIN_FRAMES).forEach((i) => {
     const img = new Image();
     img.decoding = 'async';
     img.src = `assets/seq/spin/${String(i).padStart(3, '0')}.webp`;
     img.decode().then(() => { spinFrames[i] = img; }, () => {});
-  }
+  });
 }
 
 function sizeCanvas(canvas) {
@@ -59,18 +68,21 @@ function sizeCanvas(canvas) {
   canvas.height = Math.round(canvas.clientHeight * dpr);
 }
 
-// blends two neighbouring frames so the turn stays smooth at any speed
+// blends the two nearest loaded frames, so the turn stays smooth at any speed
 function paintSpin(canvas, position) {
-  const i = Math.floor(position) % SPIN_FRAMES;
-  const next = spinFrames[(i + 1) % SPIN_FRAMES];
-  const frame = spinFrames[i];
-  if (!frame || !next || !canvas.width) return;
+  if (!canvas.width) return;
+  let before = Math.floor(position);
+  let after = before + 1;
+  while (!spinFrames[before % SPIN_FRAMES] && before > position - SPIN_FRAMES) before--;
+  while (!spinFrames[after % SPIN_FRAMES] && after < position + SPIN_FRAMES) after++;
+  const frame = spinFrames[before % SPIN_FRAMES];
+  const next = spinFrames[after % SPIN_FRAMES];
+  if (!frame || !next) return;
   const ctx = canvas.getContext('2d');
-  const blend = position - Math.floor(position);
   ctx.clearRect(0, 0, canvas.width, canvas.height);
   ctx.globalAlpha = 1;
   ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
-  ctx.globalAlpha = blend;
+  ctx.globalAlpha = (position - before) / (after - before);
   ctx.drawImage(next, 0, 0, canvas.width, canvas.height);
   ctx.globalAlpha = 1;
   canvas.parentElement.classList.add('is-live');
@@ -158,7 +170,7 @@ gsap.ticker.add((time, deltaTime) => {
   if (!reducedMotion) spinIdle = (spinIdle + dt * (SPIN_FRAMES / 6)) % SPIN_FRAMES;
   pour();
 
-  const position = (spinIdle + spinScroll) % SPIN_FRAMES;
+  const position = (spinIdle + spinScroll) % SPIN_FRAMES + SPIN_FRAMES;
   if (Math.abs(position - drawnPosition) < 0.01) return;
   drawnPosition = position;
   if (levels[1] < 1) paintSpin(spinCanvases[0], position);
@@ -229,7 +241,7 @@ function resize() {
 
 const fontsReady = Promise.race([
   Promise.all([document.fonts.load('900 1em Anybody'), document.fonts.load('400 1em "Schibsted Grotesk"')]),
-  new Promise((resolve) => setTimeout(resolve, 2500)),
+  new Promise((resolve) => setTimeout(resolve, 1500)),
 ]);
 
 choose(selected);
