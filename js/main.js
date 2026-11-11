@@ -199,6 +199,28 @@ document.querySelector('.js-add').addEventListener('click', () => {
   gsap.fromTo(cartCount, { yPercent: -60, rotate: -20 }, { yPercent: 0, rotate: 0, duration: 0.9, ease: 'expo.out' });
 });
 
+/* Phone menu and newsletter */
+
+const menu = document.getElementById('menu');
+const menuToggle = document.querySelector('.js-menu-toggle');
+
+function setMenu(open) {
+  menu.hidden = !open;
+  menuToggle.setAttribute('aria-expanded', open);
+  menuToggle.setAttribute('aria-label', open ? 'Chiudi il menu' : 'Apri il menu');
+  document.documentElement.classList.toggle('menu-open', open);
+}
+
+menuToggle.addEventListener('click', () => setMenu(menu.hidden));
+menu.querySelectorAll('a').forEach((link) => link.addEventListener('click', () => setMenu(false)));
+document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menu.hidden) setMenu(false); });
+
+document.querySelector('.js-newsletter').addEventListener('submit', (e) => {
+  e.preventDefault();
+  e.target.querySelector('.newsletter__row').hidden = true;
+  e.target.querySelector('.newsletter__done').hidden = false;
+});
+
 function resize() {
   spinCanvases.forEach(sizeCanvas);
   levels.fill(-1);

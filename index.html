@@ -29,12 +29,25 @@
 <body>
   <header class="header">
     <a class="header__logo" href="#top">Mirtifolia</a>
-    <nav class="header__nav" aria-label="Sezioni">
+    <nav class="header__nav" aria-label="Principale">
+      <a href="#top">Il sorso</a>
       <a href="#frutto">Il frutto</a>
-      <a href="#cassa">La cassa</a>
-      <a class="header__cart" href="#cassa">Carrello <span class="js-cart-count">0</span></a>
+      <a href="#cassa">Shop</a>
     </nav>
+    <div class="header__actions">
+      <a class="header__cart" href="#cassa">Carrello <span class="js-cart-count">0</span></a>
+      <button class="header__burger js-menu-toggle" type="button" aria-label="Apri il menu" aria-expanded="false" aria-controls="menu"><span></span><span></span></button>
+    </div>
   </header>
+
+  <div class="menu" id="menu" aria-label="Menu" hidden>
+    <nav class="menu__links">
+      <a href="#top">Il sorso</a>
+      <a href="#frutto">Il frutto</a>
+      <a href="#cassa">Shop</a>
+    </nav>
+    <p class="menu__note">Bottiglie di vetro da 27 cl, spedizione in tutta Italia.</p>
+  </div>
 
   <main>
     <section class="sip" id="top" aria-label="Un sorso di chinotto">
@@ -121,13 +134,38 @@
 
   <footer class="footer" data-header="#f76012">
     <p class="footer__line display">Servire freddo.</p>
-    <nav class="footer__nav" aria-label="Sezioni">
-      <a href="#top">Il sorso</a>
-      <a href="#frutto">Il frutto</a>
-      <a href="#cassa">La cassa</a>
-    </nav>
-    <p class="footer__legal">Mirtifolia è un marchio di fantasia, creato come progetto di esempio.</p>
-    <p class="footer__credit">Design e sviluppo <strong>Federico Mascia</strong></p>
+    <div class="footer__cols">
+      <nav class="footer__col" aria-label="Shop">
+        <p class="footer__head">Shop</p>
+        <a href="#cassa">Cassa da 6</a>
+        <a href="#cassa">Cassa da 12</a>
+        <a href="#cassa">Cassa da 20</a>
+      </nav>
+      <nav class="footer__col" aria-label="Mirtifolia">
+        <p class="footer__head">Mirtifolia</p>
+        <a href="#top">Il sorso</a>
+        <a href="#frutto">Il frutto</a>
+      </nav>
+      <nav class="footer__col" aria-label="Assistenza">
+        <p class="footer__head">Assistenza</p>
+        <a href="#">Spedizioni e resi</a>
+        <a href="#">Domande frequenti</a>
+        <a href="#">Contatti</a>
+      </nav>
+      <form class="newsletter js-newsletter">
+        <label class="footer__head" for="newsletter-email">Newsletter</label>
+        <div class="newsletter__row">
+          <input id="newsletter-email" type="email" placeholder="La tua email" autocomplete="email" required>
+          <button type="submit">Iscriviti</button>
+        </div>
+        <p class="newsletter__done" hidden>Grazie, iscrizione ricevuta.</p>
+      </form>
+    </div>
+    <div class="footer__bottom">
+      <p>© 2026 Mirtifolia. Marchio di fantasia, progetto di esempio.</p>
+      <p class="footer__legal"><a href="#">Privacy</a><a href="#">Cookie</a><a href="#">Termini</a></p>
+      <p>Design e progettazione <strong>Federico Mascia</strong></p>
+    </div>
   </footer>
 
   <script src="js/vendor/gsap.min.js" defer></script>
