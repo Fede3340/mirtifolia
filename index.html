@@ -10,7 +10,7 @@
   <link rel="icon" href="assets/img/favicon.svg" type="image/svg+xml">
   <link rel="preload" as="font" type="font/woff2" href="assets/fonts/anybody-900.woff2" crossorigin>
   <link rel="preload" as="font" type="font/woff2" href="assets/fonts/schibsted-grotesk.woff2" crossorigin>
-  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/style.css?v=8">
   <script>
     Promise.race([document.fonts.load('900 1em Anybody'), new Promise((resolve) => setTimeout(resolve, 1500))])
       .then(() => document.documentElement.classList.remove('fonts-pending'));
@@ -26,7 +26,7 @@
       <a href="#cassa">Shop</a>
     </nav>
     <div class="header__actions">
-      <a class="header__cart" href="#cassa">Carrello <span class="js-cart-count">0</span></a>
+      <a class="header__cart" href="#cassa"><svg class="header__bag" viewBox="0 0 20 20" aria-hidden="true"><path d="M4.5 7.5h11l-.8 9.5H5.3z"/><path d="M7.5 7.5V6a2.5 2.5 0 0 1 5 0v1.5"/></svg><span class="header__cart-label">Carrello </span><span class="js-cart-count">0</span></a>
       <button class="header__burger js-menu-toggle" type="button" aria-label="Apri il menu" aria-expanded="false" aria-controls="menu"><span></span><span></span></button>
     </div>
   </header>
@@ -127,7 +127,7 @@
 
   <footer class="footer" data-header="#f76012" data-header-bg="#150001">
     <img class="footer__mark" src="assets/img/logo.svg" width="120" height="120" alt="" loading="lazy">
-    <p class="footer__line display">Servire freddo.</p>
+    <p class="footer__line display">Mirtifolia</p>
     <div class="footer__cols">
       <nav class="footer__col" aria-label="Shop">
         <p class="footer__head">Shop</p>
@@ -164,6 +164,6 @@
 
   <script src="js/vendor/gsap.min.js" defer></script>
   <script src="js/vendor/ScrollTrigger.min.js" defer></script>
-  <script src="js/main.js" defer></script>
+  <script src="js/main.js?v=8" defer></script>
 </body>
 </html>

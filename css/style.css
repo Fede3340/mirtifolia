@@ -15,7 +15,7 @@
   --pad: clamp(20px, 4.4vw, 64px);
   --fs-title: clamp(2.6rem, 7vw, 7.5rem);
   --fs-body: clamp(1.125rem, 1.6vw, 1.5rem);
-  --fs-small: 0.875rem;
+  --fs-small: clamp(0.875rem, 0.6rem + 0.45vw, 1.05rem);
 
   --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
@@ -73,13 +73,13 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   align-items: center;
   gap: 10px;
   font-family: var(--display);
-  font-size: 1.25rem;
+  font-size: 1.6rem;
   font-weight: 900;
   font-stretch: 140%;
   text-transform: uppercase;
   letter-spacing: -0.01em;
 }
-.header__logo img { width: 34px; height: 34px; }
+.header__logo img { width: 40px; height: 40px; }
 .header__nav { display: flex; gap: clamp(18px, 2.6vw, 40px); }
 .header__nav a,
 .footer a { background: linear-gradient(currentColor, currentColor) 0 100% / 0 1.5px no-repeat; transition: background-size 0.4s var(--ease-out); }
@@ -87,10 +87,14 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .footer a:hover { background-size: 100% 1.5px; }
 .header__actions { justify-self: end; display: flex; align-items: center; gap: 18px; }
 .header__cart {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   padding: 9px 16px;
   border: 1.5px solid currentColor;
   border-radius: 999px;
 }
+.header__bag { display: none; width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.6; stroke-linejoin: round; }
 .js-cart-count { display: inline-block; font-weight: 700; }
 
 .header__burger { display: none; width: 40px; height: 40px; position: relative; }
@@ -265,7 +269,24 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   z-index: 4;
   right: var(--pad);
   bottom: var(--pad);
-  font-size: var(--fs-small);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  font-weight: 700;
+}
+.layer__hint::after {
+  content: '';
+  width: 2px;
+  height: 40px;
+  background: currentColor;
+  transform-origin: top;
+  animation: hint 2s ease-in-out infinite;
+}
+@keyframes hint {
+  0% { transform: scaleY(0); opacity: 1; }
+  60% { transform: scaleY(1); opacity: 1; }
+  100% { transform: scaleY(1); opacity: 0; }
 }
 
 .layer__words {
@@ -399,10 +420,11 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   padding: clamp(100px, 16vh, 160px) var(--pad) 28px;
   background: var(--night);
   color: var(--orange);
+  container-type: inline-size;
 }
 
 .footer__mark { grid-column: 1 / -1; width: clamp(72px, 8vw, 110px); }
-.footer__line { grid-column: 1 / -1; font-size: var(--fs-title); font-stretch: 140%; }
+.footer__line { grid-column: 1 / -1; font-size: min(7.5rem, 100cqw / 8.98); font-stretch: 150%; white-space: nowrap; }
 
 .footer__cols {
   grid-column: 1 / -1;
@@ -415,7 +437,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .footer__col a { width: max-content; }
 .footer__head { margin-bottom: 4px; font-size: var(--fs-small); font-weight: 700; }
 
-.newsletter { display: grid; gap: 10px; align-content: start; }
+.newsletter { display: grid; grid-template-columns: minmax(0, 1fr); gap: 10px; align-content: start; }
 .newsletter__row {
   display: flex;
   border-bottom: 1.5px solid currentColor;
@@ -451,9 +473,12 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   .header { grid-template-columns: 1fr auto; }
   .header__nav { display: none; }
   .header__burger { display: block; }
+  .header__actions { gap: 10px; }
   .header__cart { padding: 7px 12px; }
-  .header__logo { gap: 8px; font-size: 1rem; }
-  .header__logo img { width: 28px; height: 28px; }
+  .header__bag { display: block; }
+  .header__cart-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip-path: inset(50%); white-space: nowrap; }
+  .header__logo { gap: 8px; font-size: clamp(0.9rem, 4.6vw, 1.15rem); }
+  .header__logo img { width: 30px; height: 30px; }
 
   .layer__photo,
   .spin--right {
@@ -480,7 +505,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   .wordmark { top: auto; bottom: 38svh; font-size: calc((100cqw - 2 * var(--pad)) / 4.49); text-align: left; line-height: 0.8; }
   .wordmark span { display: block; }
   .layer__motto { top: 92px; bottom: auto; max-width: 17ch; }
-  .layer__hint { display: none; }
+  .layer__hint { right: auto; left: var(--pad); }
   .layer__words { top: 92px; }
   .layer__text { top: calc(92px + var(--state-size) * 0.84 + 24px); bottom: auto; right: var(--pad); }
 
