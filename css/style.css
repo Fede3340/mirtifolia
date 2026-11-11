@@ -108,12 +108,14 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   visibility: hidden;
   pointer-events: none;
 }
+.wave.is-active { visibility: visible; }
 .wave svg {
   display: block;
   width: 200%;
   height: 100%;
-  animation: drift 7s linear infinite;
+  animation: drift 7s linear infinite paused;
 }
+.wave.is-active svg { animation-play-state: running; }
 .wave__fill { fill: var(--bg); }
 .wave__foam { fill: none; stroke: var(--foam); stroke-width: 9; vector-effect: non-scaling-stroke; }
 

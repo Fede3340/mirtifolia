@@ -90,7 +90,7 @@ function pour() {
     layers[i].style.transform = `translate3d(0, ${y}px, 0)`;
     inners[i].style.transform = `translate3d(0, ${-y}px, 0)`;
     waves[i - 1].style.transform = `translate3d(0, ${y - 24}px, 0)`;
-    waves[i - 1].style.visibility = r > 0.001 && r < 0.999 ? 'visible' : 'hidden';
+    waves[i - 1].classList.toggle('is-active', r > 0.001 && r < 0.999);
   }
   const ink = headerOverride || layers[active].dataset.ink;
   if (ink !== headerInk) {
