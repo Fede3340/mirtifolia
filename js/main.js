@@ -103,6 +103,21 @@ ScrollTrigger.create({
   trigger: sip,
   start: 'top top',
   end: 'bottom bottom',
+  // never rest halfway through a pour: both words would stay cut by the wave
+  snap: {
+    snapTo: (value) => {
+      for (let i = 0; i < STEPS; i++) {
+        const from = START + i * GAP;
+        const to = from + LENGTH;
+        if (value > from && value < to) return value - from < to - value ? from : to;
+      }
+      return value;
+    },
+    inertia: false,
+    delay: 0.15,
+    duration: { min: 0.2, max: 0.8 },
+    ease: 'power2.inOut',
+  },
   onUpdate: (self) => {
     progressTarget = self.progress;
     spinScrollTarget = self.progress * SPIN_FRAMES * 10;

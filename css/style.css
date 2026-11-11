@@ -310,7 +310,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   background: var(--honey);
 }
 
-.fruit__title { grid-column: 1 / -1; font-size: calc(100cqw * 0.74 / 5.8); font-stretch: 132%; }
+.fruit__title { grid-column: 1 / -1; font-size: calc(100cqw * 0.74 / 5.8); font-stretch: 132%; line-height: 0.98; }
 .fruit__title > span { display: block; }
 
 .fruit__dot {
