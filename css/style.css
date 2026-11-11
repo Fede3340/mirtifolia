@@ -80,6 +80,8 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   top: 0;
   height: 100svh;
   overflow: clip;
+  container-type: inline-size;
+  --state-size: min(210px, 74cqw / 6.41);
 }
 
 .layer {
@@ -179,6 +181,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   left: var(--pad);
   right: var(--pad);
   top: 36svh;
+  font-size: min(420px, (100cqw - 2 * var(--pad)) / 8.98);
   font-stretch: 150%;
   white-space: nowrap;
   text-align: center;
@@ -216,7 +219,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   font-variant-numeric: tabular-nums;
 }
 
-.layer__state { font-stretch: 118%; white-space: nowrap; }
+.layer__state { font-size: var(--state-size); font-stretch: 118%; white-space: nowrap; }
 
 .layer__text {
   position: absolute;
@@ -234,6 +237,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 /* fruit */
 
 .fruit {
+  container-type: inline-size;
   display: grid;
   grid-template-columns: repeat(12, minmax(0, 1fr));
   column-gap: 24px;
@@ -243,7 +247,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   background: var(--honey);
 }
 
-.fruit__title { grid-column: 1 / -1; font-stretch: 132%; }
+.fruit__title { grid-column: 1 / -1; font-size: calc(100cqw * 0.74 / 5.8); font-stretch: 132%; }
 .fruit__title > span { display: block; }
 
 .fruit__dot {
@@ -398,14 +402,16 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   .spin--center::before { left: 0; right: 0; width: auto; top: -1px; bottom: auto; height: 16%; background: linear-gradient(180deg, var(--bg), transparent); }
   .spin--center::after { display: none; }
 
-  .wordmark { top: auto; bottom: 38svh; text-align: left; line-height: 0.8; }
+  .sip__stage { --state-size: min(120px, (100cqw - 2 * var(--pad)) / 6.41); }
+  .wordmark { top: auto; bottom: 38svh; font-size: calc((100cqw - 2 * var(--pad)) / 4.49); text-align: left; line-height: 0.8; }
   .wordmark span { display: block; }
   .layer__motto { top: 92px; bottom: auto; max-width: 17ch; }
   .layer__hint { display: none; }
   .layer__words { top: 92px; }
-  .layer__text { top: calc(92px + var(--words-height, 40vw)); bottom: auto; right: var(--pad); }
+  .layer__text { top: calc(92px + var(--fs-body) * 1.67 + var(--state-size) * 0.84 + 24px); bottom: auto; right: var(--pad); }
 
   .fruit { grid-template-columns: minmax(0, 1fr); }
+  .fruit__title { font-size: calc(100cqw / 5.8); }
   .fruit__dot small { left: auto; right: 0; top: 108%; text-align: right; }
   .fruit__text { grid-column: 1 / -1; margin-top: 6vh; }
 

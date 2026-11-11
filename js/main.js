@@ -1,38 +1,6 @@
 const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-const isMobile = () => window.innerWidth <= 760;
 
 gsap.registerPlugin(ScrollTrigger);
-
-/* Big type fills its box without wrapping */
-
-function textWidth(el) {
-  const range = document.createRange();
-  range.selectNodeContents(el);
-  return range.getBoundingClientRect().width;
-}
-
-function fitType() {
-  const pad = parseFloat(getComputedStyle(document.querySelector('.wordmark')).left);
-  const width = window.innerWidth - pad * 2;
-
-  const wordmark = document.querySelector('.js-wordmark');
-  wordmark.style.fontSize = '100px';
-  wordmark.style.fontSize = `${Math.min((100 * width) / textWidth(wordmark), 420)}px`;
-
-  const fruitTitle = document.querySelector('.js-fruit-title');
-  fruitTitle.style.fontSize = '100px';
-  fruitTitle.style.fontSize = `${(100 * width * (isMobile() ? 1 : 0.74)) / textWidth(fruitTitle.firstElementChild)}px`;
-
-  // every state shares one size, set by the longest word
-  const states = [...document.querySelectorAll('.js-state')];
-  states.forEach((el) => { el.style.fontSize = '100px'; });
-  const room = isMobile() ? width : window.innerWidth * 0.74;
-  const size = Math.min(isMobile() ? 120 : 210, ...states.map((el) => (100 * room) / textWidth(el)));
-  states.forEach((el) => {
-    el.style.fontSize = `${size}px`;
-    el.closest('.layer').style.setProperty('--words-height', `${el.parentElement.offsetHeight + 24}px`);
-  });
-}
 
 /* Rotating bottle: 72 decoded frames, a full background plate and a matching cut-out */
 
@@ -232,7 +200,6 @@ document.querySelector('.js-add').addEventListener('click', () => {
 });
 
 function resize() {
-  fitType();
   spinCanvases.forEach(sizeCanvas);
   levels.fill(-1);
   drawnPosition = -1;
@@ -248,8 +215,4 @@ choose(selected);
 resize();
 loadSpin();
 window.addEventListener('resize', resize);
-fontsReady.then(() => {
-  resize();
-  document.documentElement.classList.remove('fonts-pending');
-  ScrollTrigger.refresh();
-});
+fontsReady.then(() => ScrollTrigger.refresh());
