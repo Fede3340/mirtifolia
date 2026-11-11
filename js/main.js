@@ -153,7 +153,7 @@ gsap.ticker.add((time, deltaTime) => {
     const speed = Math.abs(window.scrollY - lastScroll) / Math.max(deltaTime, 1);
     lastScroll = window.scrollY;
     spinRate += (Math.min(4, 1 + speed * 1.5) - spinRate) * 0.1;
-    spinVideos.forEach((video) => { if (!video.paused) video.playbackRate = spinRate; });
+    spinVideos.forEach((video) => { if (!video.paused && Math.abs(video.playbackRate - spinRate) > 0.05) video.playbackRate = spinRate; });
     playVisible();
   }
   if (!sipVisible) return;

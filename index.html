@@ -15,7 +15,7 @@
     Promise.race([document.fonts.load('900 1em Anybody'), new Promise((resolve) => setTimeout(resolve, 1500))])
       .then(() => document.documentElement.classList.remove('fonts-pending'));
   </script>
-  <link rel="preload" as="image" href="assets/img/spin-plate.webp">
+  <link rel="preload" as="image" href="assets/img/spin-plate.webp" imagesrcset="assets/img/spin-plate-sm.webp 640w, assets/img/spin-plate.webp 936w" imagesizes="(max-width: 900px) 90vw, 50vw">
 </head>
 <body>
   <header class="header">
@@ -46,7 +46,7 @@
         <div class="layer layer--first" style="--bg: var(--orange)" data-ink="#2a0e07">
           <div class="layer__inner">
             <div class="spin spin--center">
-              <img decoding="async" class="spin__poster" src="assets/img/spin-plate.webp" width="936" height="1248" alt="La bottiglia di Mirtifolia da 27 cl al sole, su fondo arancione.">
+              <img decoding="async" class="spin__poster" src="assets/img/spin-plate.webp" srcset="assets/img/spin-plate-sm.webp 640w, assets/img/spin-plate.webp 936w" sizes="(max-width: 900px) 90vw, 50vw" width="936" height="1248" alt="La bottiglia di Mirtifolia da 27 cl al sole, su fondo arancione.">
             </div>
             <h1 class="wordmark display js-wordmark"><span>Mirti</span><span>folia</span></h1>
             <div class="spin spin--center spin--front" aria-hidden="true">
@@ -60,7 +60,7 @@
         </div>
         <div class="layer" style="--bg: var(--honey)" data-ink="#2a0e07">
           <div class="layer__inner">
-            <figure class="layer__photo"><img loading="lazy" fetchpriority="low" decoding="async" src="assets/img/glass.webp" width="1200" height="1500" alt="Un bicchiere di chinotto con il ghiaccio e una scorza d’arancia amara."></figure>
+            <figure class="layer__photo"><img loading="lazy" fetchpriority="low" decoding="async" src="assets/img/glass.webp" srcset="assets/img/glass-sm.webp 640w, assets/img/glass.webp 1200w" sizes="(max-width: 900px) 90vw, 50vw" width="1200" height="1500" alt="Un bicchiere di chinotto con il ghiaccio e una scorza d’arancia amara."></figure>
             <div class="layer__words"><span class="layer__time">0,0 s</span><h2 class="layer__state display js-state">Dolce.</h2></div>
             <p class="layer__text">Prima arriva lo zucchero.</p>
           </div>
@@ -68,7 +68,7 @@
         <div class="wave" style="--bg: var(--honey)" aria-hidden="true"><svg viewBox="0 0 2880 48" preserveAspectRatio="none"><path class="wave__fill" d="M0 24C240 6 480 6 720 24C960 42 1200 42 1440 24C1680 6 1920 6 2160 24C2400 42 2640 42 2880 24V48H0Z"/><path class="wave__foam" d="M0 24C240 6 480 6 720 24C960 42 1200 42 1440 24C1680 6 1920 6 2160 24C2400 42 2640 42 2880 24"/></svg></div>
         <div class="layer" style="--bg: var(--peel)" data-ink="#2a0e07">
           <div class="layer__inner">
-            <figure class="layer__photo"><img loading="lazy" fetchpriority="low" decoding="async" src="assets/img/branch.webp" width="1200" height="1500" alt="Un ramo di chinotto con i frutti e le foglie minute; un frutto tagliato a metà."></figure>
+            <figure class="layer__photo"><img loading="lazy" fetchpriority="low" decoding="async" src="assets/img/branch.webp" srcset="assets/img/branch-sm.webp 640w, assets/img/branch.webp 1200w" sizes="(max-width: 900px) 90vw, 50vw" width="1200" height="1500" alt="Un ramo di chinotto con i frutti e le foglie minute; un frutto tagliato a metà."></figure>
             <div class="layer__words"><span class="layer__time">1,2 s</span><h2 class="layer__state display js-state">Scorza.</h2></div>
             <p class="layer__text">Poi la buccia: verde, resinosa, un po’ pungente.</p>
           </div>
@@ -76,7 +76,7 @@
         <div class="wave" style="--bg: var(--peel)" aria-hidden="true"><svg viewBox="0 0 2880 48" preserveAspectRatio="none"><path class="wave__fill" d="M0 24C240 6 480 6 720 24C960 42 1200 42 1440 24C1680 6 1920 6 2160 24C2400 42 2640 42 2880 24V48H0Z"/><path class="wave__foam" d="M0 24C240 6 480 6 720 24C960 42 1200 42 1440 24C1680 6 1920 6 2160 24C2400 42 2640 42 2880 24"/></svg></div>
         <div class="layer" style="--bg: var(--night); --ink: var(--orange)" data-ink="#f76012">
           <div class="layer__inner">
-            <figure class="layer__photo"><img loading="lazy" fetchpriority="low" decoding="async" src="assets/img/pour.webp" width="1200" height="1500" alt="Il chinotto versato nel bicchiere, controluce su fondo scuro."></figure>
+            <figure class="layer__photo"><img loading="lazy" fetchpriority="low" decoding="async" src="assets/img/pour.webp" srcset="assets/img/pour-sm.webp 640w, assets/img/pour.webp 1200w" sizes="(max-width: 900px) 90vw, 50vw" width="1200" height="1500" alt="Il chinotto versato nel bicchiere, controluce su fondo scuro."></figure>
             <div class="layer__words"><span class="layer__time">2,6 s</span><h2 class="layer__state display js-state">Amaro.</h2></div>
             <p class="layer__text">Scuro e lungo: resta anche dopo che hai mandato giù.</p>
           </div>
@@ -85,7 +85,7 @@
         <div class="layer" style="--bg: var(--orange)" data-ink="#2a0e07">
           <div class="layer__inner">
             <div class="spin spin--right">
-              <img decoding="async" class="spin__poster" src="assets/img/spin-plate.webp" width="936" height="1248" alt="">
+              <img decoding="async" class="spin__poster" src="assets/img/spin-plate.webp" srcset="assets/img/spin-plate-sm.webp 640w, assets/img/spin-plate.webp 936w" sizes="(max-width: 900px) 90vw, 50vw" width="936" height="1248" alt="">
               <img decoding="async" class="spin__cut spin__first" src="assets/seq/spin/000.webp" alt="" aria-hidden="true">
               <video class="spin__cut js-spin-video" muted loop playsinline preload="none" hidden></video>
               <canvas class="spin__cut js-spin" aria-hidden="true"></canvas>
@@ -119,7 +119,7 @@
         <p class="crate__note">Bottiglie di vetro da 27 cl. Spedizione in tutta Italia.</p>
       </div>
       <figure class="crate__photo">
-        <img fetchpriority="low" decoding="async" src="assets/img/crate.webp" width="1200" height="1500" alt="Una cassa di legno vista dall’alto, con i tappi delle bottiglie." loading="lazy">
+        <img fetchpriority="low" decoding="async" src="assets/img/crate.webp" srcset="assets/img/crate-sm.webp 640w, assets/img/crate.webp 1200w" sizes="(max-width: 900px) 90vw, 50vw" width="1200" height="1500" alt="Una cassa di legno vista dall’alto, con i tappi delle bottiglie." loading="lazy">
         <div class="crate__slots js-slots"></div>
       </figure>
     </section>
