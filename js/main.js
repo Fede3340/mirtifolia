@@ -45,13 +45,12 @@ let spinIdle = 0;
 let spinScroll = 0;
 let drawnIndex = -1;
 
-async function loadFrames(folder, store) {
+function loadFrames(folder, store) {
   for (let i = 0; i < SPIN_FRAMES; i++) {
     const img = new Image();
+    img.decoding = 'async';
     img.src = `assets/seq/${folder}/${String(i).padStart(3, '0')}.webp`;
-    await img.decode();
-    store[i] = await createImageBitmap(img);
-    if (i === 0) drawnIndex = -1;
+    img.decode().then(() => { store[i] = img; }, () => {});
   }
 }
 
@@ -77,7 +76,7 @@ const inners = layers.map((layer) => layer.querySelector('.layer__inner'));
 const waves = [...document.querySelectorAll('.wave')];
 const header = document.querySelector('.header');
 const STEPS = 4;
-const START = 0.12;
+const START = 0.18;
 const LENGTH = 0.15;
 const GAP = 0.2;
 const levels = new Array(STEPS + 1).fill(-1);
@@ -121,7 +120,7 @@ ScrollTrigger.create({
   end: 'bottom bottom',
   onUpdate: (self) => {
     progress = self.progress;
-    spinScroll = self.progress * SPIN_FRAMES * 2;
+    spinScroll = self.progress * SPIN_FRAMES * 6;
     pour();
   },
 });
@@ -139,7 +138,7 @@ document.querySelectorAll('[data-header]').forEach((section) => {
 });
 
 gsap.ticker.add((time, deltaTime) => {
-  if (!reducedMotion) spinIdle = (spinIdle + (deltaTime / 1000) * (SPIN_FRAMES / 9)) % SPIN_FRAMES;
+  if (!reducedMotion) spinIdle = (spinIdle + (deltaTime / 1000) * (SPIN_FRAMES / 5)) % SPIN_FRAMES;
   spin();
 });
 
@@ -205,9 +204,18 @@ function resize() {
   pour();
 }
 
+const fontsReady = Promise.race([
+  Promise.all([document.fonts.load('900 1em Anybody'), document.fonts.load('400 1em "Schibsted Grotesk"')]),
+  new Promise((resolve) => setTimeout(resolve, 2500)),
+]);
+
 choose(selected);
 resize();
-window.addEventListener('resize', resize);
-document.fonts.ready.then(() => { resize(); ScrollTrigger.refresh(); });
 loadFrames('spin-bg', plates);
 loadFrames('spin', cutouts);
+window.addEventListener('resize', resize);
+fontsReady.then(() => {
+  resize();
+  document.documentElement.classList.remove('fonts-pending');
+  ScrollTrigger.refresh();
+});
