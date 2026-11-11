@@ -66,6 +66,7 @@ let progress = 0;
 let progressTarget = 0;
 let sipVisible = true;
 let headerOverride = null;
+let headerBg = '';
 let headerInk = '';
 
 const smoothstep = (x) => x * x * (3 - 2 * x);
@@ -85,7 +86,13 @@ function pour() {
     waves[i - 1].style.transform = `translate3d(0, ${y - 24}px, 0)`;
     waves[i - 1].classList.toggle('is-active', r > 0.001 && r < 0.999);
   }
-  const ink = headerOverride || layers[active].dataset.ink;
+  const ink = headerOverride ? headerOverride.dataset.header : layers[active].dataset.ink;
+  const sipDone = progressTarget >= 1;
+  const bg = headerOverride ? headerOverride.dataset.headerBg : sipDone ? layers[STEPS].dataset.headerBg : 'transparent';
+  if (bg !== headerBg) {
+    headerBg = bg;
+    header.style.setProperty('--header-bg', bg);
+  }
   if (ink !== headerInk) {
     headerInk = ink;
     header.style.setProperty('--header-ink', ink);
@@ -115,7 +122,8 @@ document.querySelectorAll('[data-header]').forEach((section) => {
     start: 'top 40px',
     end: 'bottom 40px',
     onToggle: (self) => {
-      headerOverride = self.isActive ? section.dataset.header : null;
+      if (self.isActive) headerOverride = section;
+      else if (headerOverride === section) headerOverride = null;
       pour();
     },
   });

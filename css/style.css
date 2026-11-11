@@ -65,7 +65,8 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   font-size: var(--fs-small);
   font-weight: 600;
   color: var(--header-ink, var(--ink));
-  transition: color 0.4s;
+  background: var(--header-bg, transparent);
+  transition: color 0.4s, background-color 0.4s;
 }
 .header__logo {
   display: flex;
@@ -128,7 +129,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   text-transform: uppercase;
 }
 .menu__note { font-size: var(--fs-small); }
-.menu-open .header { color: var(--orange); }
+.menu-open .header { color: var(--orange); background: transparent; }
 .menu-open { overflow: hidden; }
 
 /* sip */
