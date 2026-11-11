@@ -122,7 +122,40 @@ document.querySelectorAll('[data-header]').forEach((section) => {
 });
 
 // scroll is eased so wheel steps turn into one continuous movement
+/* Chromium plays the transparent WebM: one file, decoded by the video hardware.
+   Other browsers fall back to the frame sequence on canvas. */
+const spinVideos = [...document.querySelectorAll('.js-spin-video')];
+const useVideo = Boolean(navigator.userAgentData) && spinVideos[0].canPlayType('video/webm; codecs="vp9"') !== '';
+let lastScroll = window.scrollY;
+let spinRate = 1;
+
+if (useVideo) {
+  spinVideos.forEach((video, i) => {
+    video.src = 'assets/video/spin.webm';
+    video.hidden = false;
+    spinCanvases[i].hidden = true;
+    video.addEventListener('playing', () => video.parentElement.classList.add('is-live'), { once: true });
+  });
+} else {
+  loadSpin();
+}
+
+function playVisible() {
+  const show = [sipVisible && levels[1] < 1, sipVisible && levels[STEPS] > 0];
+  spinVideos.forEach((video, i) => {
+    if (show[i] && video.paused) video.play().catch(() => {});
+    if (!show[i] && !video.paused) video.pause();
+  });
+}
+
 gsap.ticker.add((time, deltaTime) => {
+  if (useVideo) {
+    const speed = Math.abs(window.scrollY - lastScroll) / Math.max(deltaTime, 1);
+    lastScroll = window.scrollY;
+    spinRate += (Math.min(4, 1 + speed * 1.5) - spinRate) * 0.1;
+    spinVideos.forEach((video) => { if (!video.paused) video.playbackRate = spinRate; });
+    playVisible();
+  }
   if (!sipVisible) return;
   const dt = deltaTime / 1000;
   const ease = reducedMotion ? 1 : 1 - Math.exp(-dt * 7);
@@ -131,6 +164,7 @@ gsap.ticker.add((time, deltaTime) => {
   if (!reducedMotion) spinIdle = (spinIdle + dt * (SPIN_FRAMES / 4)) % SPIN_FRAMES;
   pour();
 
+  if (useVideo) return;
   const index = Math.floor(spinIdle + spinScroll) % SPIN_FRAMES + SPIN_FRAMES;
   if (index === drawnIndex) return;
   drawnIndex = index;
@@ -228,6 +262,5 @@ const fontsReady = Promise.race([
 
 choose(selected);
 resize();
-loadSpin();
 window.addEventListener('resize', resize);
 fontsReady.then(() => ScrollTrigger.refresh());

@@ -16,15 +16,6 @@
       .then(() => document.documentElement.classList.remove('fonts-pending'));
   </script>
   <link rel="preload" as="image" href="assets/img/spin-plate.webp">
-  <link rel="preload" as="image" href="assets/seq/spin/000.webp">
-  <link rel="preload" as="image" href="assets/seq/spin/016.webp">
-  <link rel="preload" as="image" href="assets/seq/spin/032.webp">
-  <link rel="preload" as="image" href="assets/seq/spin/048.webp">
-  <link rel="preload" as="image" href="assets/seq/spin/064.webp">
-  <link rel="preload" as="image" href="assets/seq/spin/080.webp">
-  <link rel="preload" as="image" href="assets/seq/spin/096.webp">
-  <link rel="preload" as="image" href="assets/seq/spin/112.webp">
-  <link rel="preload" as="image" href="assets/seq/spin/128.webp">
 </head>
 <body>
   <header class="header">
@@ -60,6 +51,7 @@
             <h1 class="wordmark display js-wordmark"><span>Mirti</span><span>folia</span></h1>
             <div class="spin spin--center spin--front" aria-hidden="true">
               <img decoding="async" class="spin__cut spin__first" src="assets/seq/spin/000.webp" alt="">
+              <video class="spin__cut js-spin-video" muted loop playsinline preload="auto" hidden></video>
               <canvas class="spin__cut js-spin"></canvas>
             </div>
             <p class="layer__motto">Dolce per un attimo, poi amaro per un bel pezzo.</p>
@@ -95,6 +87,7 @@
             <div class="spin spin--right">
               <img decoding="async" class="spin__poster" src="assets/img/spin-plate.webp" width="936" height="1248" alt="">
               <img decoding="async" class="spin__cut spin__first" src="assets/seq/spin/000.webp" alt="" aria-hidden="true">
+              <video class="spin__cut js-spin-video" muted loop playsinline preload="none" hidden></video>
               <canvas class="spin__cut js-spin" aria-hidden="true"></canvas>
             </div>
             <div class="layer__words"><span class="layer__time">4,0 s</span><h2 class="layer__state display js-state">Un altro.</h2></div>
