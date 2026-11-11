@@ -314,26 +314,10 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 .fruit__title > span { display: block; }
 
 .fruit__dot {
-  position: relative;
   display: inline-block;
   width: 0.56em;
   margin-left: 0.03em;
   vertical-align: -0.02em;
-}
-
-.fruit__dot small {
-  position: absolute;
-  left: 115%;
-  top: 34%;
-  width: max-content;
-  max-width: 16ch;
-  font-family: var(--sans);
-  font-size: var(--fs-small);
-  font-weight: 600;
-  font-stretch: 100%;
-  line-height: 1.35;
-  letter-spacing: 0;
-  text-transform: none;
 }
 
 .fruit__text {
@@ -509,7 +493,6 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
 
   .fruit { grid-template-columns: minmax(0, 1fr); }
   .fruit__title { font-size: calc(100cqw / 5.8); }
-  .fruit__dot small { left: auto; right: 0; top: 108%; text-align: right; }
   .fruit__text { grid-column: 1 / -1; margin-top: 6vh; }
 
   .crate { grid-template-columns: 1fr; row-gap: 40px; }
