@@ -10,7 +10,7 @@ const spinCanvases = [...document.querySelectorAll('.js-spin')];
 let spinIdle = 0;
 let spinScroll = 0;
 let spinScrollTarget = 0;
-let drawnPosition = -1;
+let drawnIndex = -1;
 
 // coarse frames first, so the bottle turns as soon as a few are in
 function loadOrder(count) {
@@ -31,28 +31,21 @@ function loadSpin() {
 }
 
 function sizeCanvas(canvas) {
-  const dpr = Math.min(window.devicePixelRatio, 2);
+  const dpr = Math.min(window.devicePixelRatio, 1.5);
   canvas.width = Math.round(canvas.clientWidth * dpr);
   canvas.height = Math.round(canvas.clientHeight * dpr);
 }
 
-// blends the two nearest loaded frames, so the turn stays smooth at any speed
-function paintSpin(canvas, position) {
+// draws the exact frame when it is loaded, otherwise the closest one already in
+function paintSpin(canvas, index) {
   if (!canvas.width) return;
-  let before = Math.floor(position);
-  let after = before + 1;
-  while (!spinFrames[before % SPIN_FRAMES] && before > position - SPIN_FRAMES) before--;
-  while (!spinFrames[after % SPIN_FRAMES] && after < position + SPIN_FRAMES) after++;
-  const frame = spinFrames[before % SPIN_FRAMES];
-  const next = spinFrames[after % SPIN_FRAMES];
-  if (!frame || !next) return;
+  let i = index;
+  while (!spinFrames[i % SPIN_FRAMES] && i > index - SPIN_FRAMES) i--;
+  const frame = spinFrames[i % SPIN_FRAMES];
+  if (!frame) return;
   const ctx = canvas.getContext('2d');
   ctx.clearRect(0, 0, canvas.width, canvas.height);
-  ctx.globalAlpha = 1;
   ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
-  ctx.globalAlpha = (position - before) / (after - before);
-  ctx.drawImage(next, 0, 0, canvas.width, canvas.height);
-  ctx.globalAlpha = 1;
   canvas.parentElement.classList.add('is-live');
 }
 
@@ -105,7 +98,7 @@ ScrollTrigger.create({
   end: 'bottom bottom',
   onUpdate: (self) => {
     progressTarget = self.progress;
-    spinScrollTarget = self.progress * SPIN_FRAMES * 6;
+    spinScrollTarget = self.progress * SPIN_FRAMES * 10;
   },
 });
 
@@ -135,14 +128,14 @@ gsap.ticker.add((time, deltaTime) => {
   const ease = reducedMotion ? 1 : 1 - Math.exp(-dt * 7);
   progress += (progressTarget - progress) * ease;
   spinScroll += (spinScrollTarget - spinScroll) * ease;
-  if (!reducedMotion) spinIdle = (spinIdle + dt * (SPIN_FRAMES / 6)) % SPIN_FRAMES;
+  if (!reducedMotion) spinIdle = (spinIdle + dt * (SPIN_FRAMES / 4)) % SPIN_FRAMES;
   pour();
 
-  const position = (spinIdle + spinScroll) % SPIN_FRAMES + SPIN_FRAMES;
-  if (Math.abs(position - drawnPosition) < 0.01) return;
-  drawnPosition = position;
-  if (levels[1] < 1) paintSpin(spinCanvases[0], position);
-  if (levels[STEPS] > 0) paintSpin(spinCanvases[1], position);
+  const index = Math.floor(spinIdle + spinScroll) % SPIN_FRAMES + SPIN_FRAMES;
+  if (index === drawnIndex) return;
+  drawnIndex = index;
+  if (levels[1] < 1) paintSpin(spinCanvases[0], index);
+  if (levels[STEPS] > 0) paintSpin(spinCanvases[1], index);
 });
 
 /* Crate: missing bottles leave empty slots */
@@ -224,7 +217,7 @@ document.querySelector('.js-newsletter').addEventListener('submit', (e) => {
 function resize() {
   spinCanvases.forEach(sizeCanvas);
   levels.fill(-1);
-  drawnPosition = -1;
+  drawnIndex = -1;
   pour();
 }
 
