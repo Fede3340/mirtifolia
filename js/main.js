@@ -3,11 +3,6 @@ const isMobile = () => window.innerWidth <= 760;
 
 gsap.registerPlugin(ScrollTrigger);
 
-const lenis = new Lenis({ anchors: true });
-lenis.on('scroll', ScrollTrigger.update);
-gsap.ticker.add((time) => lenis.raf(time * 1000));
-gsap.ticker.lagSmoothing(0);
-
 /* Big type fills its box without wrapping */
 
 function textWidth(el) {
@@ -39,99 +34,85 @@ function fitType() {
   });
 }
 
-/* Rotating bottle: 72 frames, idle spin plus scroll */
+/* Rotating bottle: 72 decoded frames, a full background plate and a matching cut-out */
 
 const SPIN_FRAMES = 72;
-const spinFrames = [];
-const spinCanvases = [...document.querySelectorAll('.spin__canvas')];
+const plates = [];
+const cutouts = [];
+const plateCanvases = [...document.querySelectorAll('.js-spin')];
+const cutCanvas = document.querySelector('.js-spin-cut');
 let spinIdle = 0;
 let spinScroll = 0;
+let drawnIndex = -1;
 
-for (let i = 0; i < SPIN_FRAMES; i++) {
-  const img = new Image();
-  img.decoding = 'async';
-  img.onload = () => { spinFrames[i] = img; };
-  img.src = `assets/seq/spin/${String(i).padStart(3, '0')}.webp`;
+async function loadFrames(folder, store) {
+  for (let i = 0; i < SPIN_FRAMES; i++) {
+    const img = new Image();
+    img.src = `assets/seq/${folder}/${String(i).padStart(3, '0')}.webp`;
+    await img.decode();
+    store[i] = await createImageBitmap(img);
+    if (i === 0) drawnIndex = -1;
+  }
 }
 
-function sizeSpin() {
-  const dpr = Math.min(window.devicePixelRatio, 2);
-  spinCanvases.forEach((canvas) => {
-    canvas.width = canvas.clientWidth * dpr;
-    canvas.height = canvas.clientHeight * dpr;
-  });
+function sizeCanvas(canvas) {
+  const dpr = Math.min(window.devicePixelRatio, 1.5);
+  canvas.width = Math.round(canvas.clientWidth * dpr);
+  canvas.height = Math.round(canvas.clientHeight * dpr);
 }
 
-function drawSpin() {
-  const index = Math.floor(spinIdle + spinScroll) % SPIN_FRAMES;
-  const img = spinFrames[index];
-  if (!img) return;
-  spinCanvases.forEach((canvas) => {
-    const ctx = canvas.getContext('2d');
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
-  });
+function paint(canvas, frame) {
+  if (!frame || !canvas.width) return;
+  const ctx = canvas.getContext('2d');
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+  ctx.drawImage(frame, 0, 0, canvas.width, canvas.height);
 }
 
 /* The sip: each taste rises over the last one like soda filling a glass */
 
 const sip = document.querySelector('.sip');
+const stage = document.querySelector('.sip__stage');
 const layers = [...document.querySelectorAll('.layer')];
-const foams = [...document.querySelectorAll('.foam')];
+const inners = layers.map((layer) => layer.querySelector('.layer__inner'));
+const waves = [...document.querySelectorAll('.wave')];
 const header = document.querySelector('.header');
-const inkSections = [...document.querySelectorAll('[data-ink]:not(.layer)')];
 const STEPS = 4;
 const START = 0.12;
 const LENGTH = 0.15;
 const GAP = 0.2;
+const levels = new Array(STEPS + 1).fill(-1);
 let progress = 0;
+let headerOverride = null;
 
 const smoothstep = (x) => x * x * (3 - 2 * x);
 const level = (i) => smoothstep(gsap.utils.clamp(0, 1, (progress - START - (i - 1) * GAP) / LENGTH));
 
-function wave(r, t, lift) {
-  const w = window.innerWidth;
-  const h = window.innerHeight;
-  const amp = Math.sin(Math.PI * r) * Math.min(26, h * 0.03);
-  const base = h * (1 - r) - lift;
-  const points = [];
-  for (let k = 0; k <= 24; k++) {
-    const x = (w * k) / 24;
-    const y = base + amp * Math.sin((x / w) * 7.5 + t * 2.1) + amp * 0.45 * Math.sin((x / w) * 15 - t * 3.3);
-    points.push(`${x.toFixed(1)}px ${y.toFixed(1)}px`);
-  }
-  return points;
-}
-
-function pour(t) {
+function pour() {
+  const height = stage.clientHeight;
   let active = 0;
   for (let i = 1; i <= STEPS; i++) {
     const r = level(i);
-    const layer = layers[i];
-    const foam = foams[i - 1];
-    if (r <= 0) {
-      layer.style.clipPath = foam.style.clipPath = 'inset(100% 0 0 0)';
-      continue;
-    }
-    if (r >= 1) {
-      layer.style.clipPath = 'none';
-      foam.style.clipPath = 'inset(100% 0 0 0)';
-      active = i;
-      continue;
-    }
     if (r > 0.5) active = i;
-    const edge = wave(r, t, 0);
-    const top = wave(r, t, 12);
-    layer.style.clipPath = `polygon(0px ${window.innerHeight}px, ${edge.join(',')}, ${window.innerWidth}px ${window.innerHeight}px)`;
-    foam.style.clipPath = `polygon(${top.join(',')}, ${edge.reverse().join(',')})`;
+    if (r === levels[i]) continue;
+    levels[i] = r;
+    const y = (1 - r) * height;
+    layers[i].style.transform = `translate3d(0, ${y}px, 0)`;
+    inners[i].style.transform = `translate3d(0, ${-y}px, 0)`;
+    waves[i - 1].style.transform = `translate3d(0, ${y - 24}px, 0)`;
+    waves[i - 1].style.visibility = r > 0 && r < 1 ? 'visible' : 'hidden';
   }
+  header.style.setProperty('--header-ink', headerOverride || layers[active].dataset.ink);
+}
 
-  let ink = layers[active].dataset.ink;
-  inkSections.forEach((section) => {
-    const box = section.getBoundingClientRect();
-    if (box.top <= 40 && box.bottom > 40) ink = section.dataset.ink;
-  });
-  header.style.setProperty('--header-ink', ink);
+function spin() {
+  const index = Math.floor(spinIdle + spinScroll) % SPIN_FRAMES;
+  if (index === drawnIndex) return;
+  drawnIndex = index;
+  if (levels[1] < 1) {
+    paint(plateCanvases[0], plates[index]);
+    paint(cutCanvas, cutouts[index]);
+  }
+  if (levels[STEPS] > 0) paint(plateCanvases[1], plates[index]);
 }
 
 ScrollTrigger.create({
@@ -141,13 +122,25 @@ ScrollTrigger.create({
   onUpdate: (self) => {
     progress = self.progress;
     spinScroll = self.progress * SPIN_FRAMES * 2;
+    pour();
   },
+});
+
+document.querySelectorAll('[data-header]').forEach((section) => {
+  ScrollTrigger.create({
+    trigger: section,
+    start: 'top 40px',
+    end: 'bottom 40px',
+    onToggle: (self) => {
+      headerOverride = self.isActive ? section.dataset.header : null;
+      pour();
+    },
+  });
 });
 
 gsap.ticker.add((time, deltaTime) => {
   if (!reducedMotion) spinIdle = (spinIdle + (deltaTime / 1000) * (SPIN_FRAMES / 9)) % SPIN_FRAMES;
-  drawSpin();
-  pour(time);
+  spin();
 });
 
 /* Crate: missing bottles leave empty slots */
@@ -204,8 +197,17 @@ document.querySelector('.js-add').addEventListener('click', () => {
   gsap.fromTo(cartCount, { yPercent: -60, rotate: -20 }, { yPercent: 0, rotate: 0, duration: 0.9, ease: 'expo.out' });
 });
 
+function resize() {
+  fitType();
+  [...plateCanvases, cutCanvas].forEach(sizeCanvas);
+  levels.fill(-1);
+  drawnIndex = -1;
+  pour();
+}
+
 choose(selected);
-fitType();
-sizeSpin();
-document.fonts.ready.then(() => { fitType(); ScrollTrigger.refresh(); });
-window.addEventListener('resize', () => { fitType(); sizeSpin(); });
+resize();
+window.addEventListener('resize', resize);
+document.fonts.ready.then(() => { resize(); ScrollTrigger.refresh(); });
+loadFrames('spin-bg', plates);
+loadFrames('spin', cutouts);

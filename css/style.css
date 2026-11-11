@@ -48,17 +48,6 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   letter-spacing: -0.01em;
 }
 
-/* paper grain: ties the flat colour fields to the film grain of the photos */
-body::after {
-  content: "";
-  position: fixed;
-  inset: 0;
-  z-index: 50;
-  pointer-events: none;
-  opacity: 0.07;
-  mix-blend-mode: multiply;
-  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)'/%3E%3C/svg%3E");
-}
 
 /* header */
 
@@ -93,20 +82,38 @@ body::after {
 .layer {
   position: absolute;
   inset: 0;
-  z-index: 0;
+  overflow: hidden;
   background: var(--bg);
   color: var(--ink);
+  will-change: transform;
 }
+.layer:not(.layer--first) { transform: translate3d(0, 100%, 0); }
 
-.foam {
+.layer__inner { position: absolute; inset: 0; will-change: transform; }
+.layer:not(.layer--first) .layer__inner { transform: translate3d(0, -100%, 0); }
+
+.wave {
   position: absolute;
-  inset: 0;
-  z-index: 0;
-  background: var(--foam);
+  top: 0;
+  left: 0;
+  z-index: 1;
+  width: 100%;
+  height: 48px;
+  overflow: hidden;
+  visibility: hidden;
+  pointer-events: none;
+  will-change: transform;
 }
+.wave svg {
+  display: block;
+  width: 200%;
+  height: 100%;
+  animation: drift 7s linear infinite;
+}
+.wave__fill { fill: var(--bg); }
+.wave__foam { fill: none; stroke: var(--foam); stroke-width: 9; vector-effect: non-scaling-stroke; }
 
-.foam,
-.foam + .layer { clip-path: inset(100% 0 0 0); }
+@keyframes drift { to { transform: translate3d(-50%, 0, 0); } }
 
 .layer__photo,
 .spin--right {
@@ -133,11 +140,12 @@ body::after {
   -webkit-mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent);
   mask-image: linear-gradient(90deg, transparent, #000 14%, #000 86%, transparent);
 }
-.spin--top { z-index: 3; -webkit-mask-image: none; mask-image: none; }
+.spin--front { z-index: 3; -webkit-mask-image: none; mask-image: none; }
 
-.spin__base { width: 100%; height: 100%; }
+.spin__poster,
+.spin__frame { position: absolute; inset: 0; width: 100%; height: 100%; }
 
-.spin__canvas {
+.spin__cut {
   position: absolute;
   left: 20.03%;
   top: 28.25%;
@@ -368,7 +376,7 @@ body::after {
     -webkit-mask-image: linear-gradient(180deg, transparent, #000 14%);
     mask-image: linear-gradient(180deg, transparent, #000 14%);
   }
-  .spin--top { -webkit-mask-image: none; mask-image: none; }
+  .spin--front { -webkit-mask-image: none; mask-image: none; }
 
   .wordmark { top: auto; bottom: 38svh; text-align: left; line-height: 0.8; }
   .wordmark span { display: block; }
