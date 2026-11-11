@@ -275,13 +275,6 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   top: clamp(96px, 15svh, 150px);
 }
 
-.layer__time {
-  display: block;
-  margin-bottom: 0.35em;
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-}
-
 .layer__state { font-size: var(--state-size); font-stretch: 118%; white-space: nowrap; }
 
 .layer__text {
@@ -489,7 +482,7 @@ button { font: inherit; color: inherit; background: none; border: 0; padding: 0;
   .layer__motto { top: 92px; bottom: auto; max-width: 17ch; }
   .layer__hint { display: none; }
   .layer__words { top: 92px; }
-  .layer__text { top: calc(92px + var(--fs-body) * 1.67 + var(--state-size) * 0.84 + 24px); bottom: auto; right: var(--pad); }
+  .layer__text { top: calc(92px + var(--state-size) * 0.84 + 24px); bottom: auto; right: var(--pad); }
 
   .fruit { grid-template-columns: minmax(0, 1fr); }
   .fruit__title { font-size: calc(100cqw / 5.8); }
